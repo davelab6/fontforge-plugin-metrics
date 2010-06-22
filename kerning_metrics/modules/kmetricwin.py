@@ -49,6 +49,21 @@ class KMetricWin:
         
         self.b.connect_signals(self)
         self.w.show_all()
+
+        print dir(afont)
+        t = afont['t']
+        print t
+        print dir(t)
+        print "Width", t.width
+        print "LBearing", t.left_side_bearing
+        print "RBearing", t.right_side_bearing
+        print "vwidth", t.vwidth
+        print "anchorpoints", t.anchorPoints
+        print "activelayer", t.activeLayer
+        print "layers", t.layers
+        for lname in t.layers:
+            print lname, t.layers[lname]
+        #print dir()
         
     def dndsetup(self):
         self.treeview = self.g('mainview')
