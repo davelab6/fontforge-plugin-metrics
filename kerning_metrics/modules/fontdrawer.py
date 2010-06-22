@@ -2,8 +2,10 @@
 import math
 
 class FontArea:
-    def __init__(self, da):
+    def __init__(self, da, font, letters):
         self.da = da
+        self.font = font
+        self.letters = letters
         self.da.connect("expose_event", self.expose)
         
     def expose(self, widget, event):
@@ -19,33 +21,40 @@ class FontArea:
         return False
     
     def draw(self, context):
+        
         rect = self.da.get_allocation()
-        x = rect.x + rect.width / 2
-        y = rect.y + rect.height / 2
-        
-        radius = min(rect.width / 2, rect.height / 2) - 5
-        
-        # clock back
-        context.arc(x, y, radius, 0, 2 * math.pi)
-        context.set_source_rgb(1, 1, 1)
-        context.fill_preserve()
-        context.set_source_rgb(0, 0, 0)
-        context.stroke()
-        
-        # clock ticks
-        for i in xrange(12):
-            context.save()
-            
-            if i % 3 == 0:
-                inset = 0.2 * radius
-            else:
-                inset = 0.1 * radius
-                context.set_line_width(0.5 * context.get_line_width())
-            
-            context.move_to(x + (radius - inset) * math.cos(i * math.pi / 6),
-                            y + (radius - inset) * math.sin(i * math.pi / 6))
-            context.line_to(x + radius * math.cos(i * math.pi / 6),
-                            y + radius * math.sin(i * math.pi / 6))
-            context.stroke()
-            context.restore()
-        
+        x = 0
+        y = 0
+        for l in self.letters:
+            glyph = self.font[l]
+            for lname in glyph.layers:
+                print lname, glyph.layers[lname]
+                for c in glyph.layers[lname]:
+                    self.drawfontcontour(x, y, c)
+            x, y = scale(rect, x + l.width, y)
+
+    def scale(self, rect, x, y):
+        y = int(rect.height - (y / 10.)) - 100
+        x = int(x / 10.)
+        return (x, y)
+
+    def drawfontcontour(self, offx, offy, contour):
+        self.context.set_source_rgb(0, 0, 0)
+        rect = self.da.get_allocation()
+        x = rect.x #+ rect.width / 2
+        y = rect.y #+ rect.height / 2
+        offx += x
+        offy += y
+        on_curve = False
+        for p in contour + contour[0]:
+            print p.x, p.y, p.on_curve
+            if on_curve:
+                sx, sy = self.scale(rect, p.x + offx, p.y + offy)
+                self.context.line_to(sx, sy)
+                self.context.stroke()
+            sx, sy = self.scale(rect, p.x + offx, p.y + offy)
+            self.context.move_to(sx, sy)
+            #prev_x = p.x
+            #prev_y = p.y
+            on_curve = True # p.on_curve
+
