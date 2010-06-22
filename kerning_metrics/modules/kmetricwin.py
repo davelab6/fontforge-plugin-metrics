@@ -22,6 +22,7 @@ import os
 modpath = sys._getframe().f_code.co_filename
 modpath = os.path.dirname(modpath)
 
+from fontdrawer import FontArea
 
 class KMetricWin:
     
@@ -40,7 +41,10 @@ class KMetricWin:
         self.ps = self.g('prog_subhead')
         self.pl = self.g('prog_line')
         self.pb = self.g('progress')
+        self.da = self.g('fontdrawingarea')
         
+        self.fa = FontArea(self.da)
+
         # Set up DND
         #self.dndsetup()
         

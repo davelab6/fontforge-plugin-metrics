@@ -184,7 +184,9 @@
             <property name="visible">True</property>
             <property name="resize_mode">queue</property>
             <child>
-              <placeholder/>
+              <object class="GtkDrawingArea" id="fontdrawingarea">
+                <property name="visible">True</property>
+              </object>
             </child>
           </object>
           <packing>
